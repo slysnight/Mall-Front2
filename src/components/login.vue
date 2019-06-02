@@ -19,7 +19,7 @@
           </div>
           <div class="form-group">
             <label for>密码</label>
-            <input type="password" v-model="password" placeholder="Password" class="form-control">
+            <input type="password" v-model="password" @keyup="login($event)" placeholder="Password" class="form-control">
           </div>
           <input type="button" @click="login" value="登录" class="btn btn-primary">
         </form>
@@ -50,19 +50,47 @@
       };
     },
     methods: {
-      login: function() {
-        let data=new FormData();
-            data.append('username',this.username);
-            data.append('password',this.password);
-        axios.post(url_login, data)
-          .then((response)=>{
+      login: function(event) {
+        let whatKeyCodeInputted;
+        if (event.code !== undefined) {
+          // 使用keyboardvent.key处理事件，并将handled设置为true。
+          whatKeyCodeInputted=event.code;
 
-            this.router.push({path:'/home'})
-          })
-          .catch((response)=>{
-            this.showInfo(response,"response")
-          });
+        } else if (event.keyIdentifier !== undefined) {
+          // 使用keyboardvent.keyIdentifier处理事件，并将handled设置为true。
+          whatKeyCodeInputted=event.keyIdentifier;
+          console.log("2");
 
+
+        } else if (event.keyCode !== undefined) {
+          //使用keyboardvent.keycode处理事件并将handled设置为true。
+          whatKeyCodeInputted=event.keyCode;
+        }
+        if(whatKeyCodeInputted==="Enter"){
+          let data=new FormData();
+          data.append('username',this.username);
+          data.append('password',this.password);
+          axios.post(url_login, data)
+            .then((response)=>{
+              //number类型
+              var role=response.data.data.role;
+              //push会向history添加一个记录能返回上一个页面 repalce不添加，点击返回会到上上个页面
+              //go(i) 可以向前向后跳i个页面 可以正负
+              //this.$router.repalce()
+              switch (role) {
+                case 1:
+                  // window.location.href = this.state.redirect || '#/home';
+                  window.location.href = '/CategoryManagement/CMHome';
+                  break;
+              }
+
+            })
+            .catch((response)=>{
+              this.showInfo(response,"response")
+            });
+
+
+        }
       },
       showInfo:function(message,type){
         type = type||'info';

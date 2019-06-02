@@ -1,12 +1,8 @@
 <template>
     <div id="AdminView">
-      <!--<div id="Categorymanagement_login_table" >-->
-        <!--用户名：<input type="text" class="form-control" v-model="username"> <br>-->
-        <!--密码：&nbsp;&nbsp; <input type="password" class="form-control" v-model="password" @keyup="login($event)">-->
-      <!--</div>-->
+      <div><h1>品类管理</h1></div>
       <hr>
       <button @click="RequestAllData()" class="btn btn-dark">请求数据</button>
-      <button @click="get_user_info()" class="btn btn-success">获取个人信息</button>
       <hr>
 
       <!--搜索栏-->
@@ -24,13 +20,14 @@
 
 
       <!--管理员视图-->
-      <table class="table table-striped table-sm" style="width: 100% ;text-align:center" >
+      <table class="table table-striped table-sm table-hover" style="width: 100% ;text-align:center" >
 
         <thead>
           <tr>
             <th>编号</th>
             <th>名称</th>
             <th>父类别</th>
+            <th>操作</th>
           </tr>
         </thead>
        <tbody>
@@ -48,10 +45,12 @@
            <span @click="get_deep_category(a.id)">{{a.parentId===0?"root":a.parentId}} </span>
          </td>
          <td>
-          <h5 style="float: right" >
+          <h5 style="" >
             <span class="badge badge-success">编辑</span>
             <span class="badge badge-danger">删除</span>
           </h5>
+           <router-link to="" class="opera">查看其子类别</router-link>
+
          </td>
 
        </tr>
@@ -69,7 +68,7 @@
            <span @click="get_deep_category(a.id)">{{a.parentId===0?"root":a.parentId}} </span>
          </td>
          <td>
-           <h5 style="float: right" >
+           <h5 style="" >
              <span class="badge badge-success">编辑</span>
              <span class="badge badge-danger">删除</span>
            </h5>
@@ -119,7 +118,7 @@
   const url_get_deep_category="http://localhost:8080/manage/category/get_deep_category.do";
 
     export default {
-        name: "AdminView",data(){
+        name: "CMSearch",data(){
           return{searchText:"",
             username:'',
             password:'',
@@ -127,13 +126,13 @@
               msg:''
             },
             categories: {
-              createTime: "",
               id: "",
               name: "",
               parentId:"",
               sortOrder: "",
               status:"",
-              updateTime: ""
+              updateTime: "",
+              createTime: ""
             },
             user:{
               createTime:'',
@@ -148,7 +147,8 @@
             },
             temp:{} //暂时存储categorys
           }
-      },methods:{search(key){
+      },methods:{
+          search(key){
           if(this.categories["nbsp"]!==undefined){
             this.temp=this.categories;
           }
@@ -179,7 +179,8 @@
             // this.categories={...this.categories,"nbsp":""};
 
           }
-        },refresh(){
+        },
+        refresh(){
           if(Object.keys(this.temp).length>0)
             this.categories=this.temp;
             this.searchText="";
@@ -248,38 +249,6 @@
              });
           console.log("getCategory=>res.data.data",this.categories.length);
         },
-        get_user_info(){
-          axios.get(url_get_user_info).then((res)=>{
-            // console.log(res);
-            /*
-            * ResponseCode.java得到状态码表示什么
-            * */
-            if(res.status!==200){
-              return
-            }
-            switch (res.data.status) {
-              case 0:
-                console.log("get_user_info success!");
-                this.user=res.data.data;
-                delete this.user["answer"];
-                console.log(this.user);
-                break;
-              case 1:
-                console.log("get_user_info error!");
-                break;
-              case 10:
-                console.log("请登录!");
-                break;
-              case 2:
-                console.log("get_user_info: ILLEGAL_ARGUMENT!");
-              default:
-                console.log("异常");
-                break;
-            }
-          }).catch((res)=>{
-            alert("error")
-          })
-        },
         RequestAllData(){
           this.getCategory(0).then((res)=>{
             this.categories=res.data.data;
@@ -303,5 +272,8 @@
 </script>
 
 <style scoped>
-
+  .opera{
+    margin-right: 10px;
+    cursor: pointer;
+  }
 </style>

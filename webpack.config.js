@@ -1,5 +1,5 @@
-var path = require('path')
-var webpack = require('webpack')
+var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
   entry: './src/main.js',
@@ -66,12 +66,16 @@ module.exports = {
         options: {
           name: '[name].[ext]?[hash]'
         }
+      },{
+        test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
+        loader: 'file-loader'
       }
     ]
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      'utils':path.join(__dirname,"./src/Utils")
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
